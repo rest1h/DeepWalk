@@ -1,10 +1,12 @@
-import math
-from sklearn.metrics import f1_score
 import logging
-import numpy as np
+import math
 from typing import List
-from loss import cross_entropy_loss
+
+import numpy as np
+from sklearn.metrics import f1_score
+
 from activation import softmax
+from loss import cross_entropy_loss
 
 
 def xavier_initialization(shape: tuple) -> np.ndarray:

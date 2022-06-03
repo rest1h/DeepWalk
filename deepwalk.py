@@ -1,8 +1,10 @@
-import networkx as nx
 import random
-from skip_gram import SkipGram
 from typing import List
+
+import networkx as nx
 import numpy as np
+
+from skip_gram import SkipGram
 
 
 class DeepWalk:
