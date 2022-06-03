@@ -42,7 +42,7 @@ class DeepWalk:
         # train a skip-gram model, get a list including losses and return the list
         return self.model.train(self.epochs, walker.walks, num_of_nodes, self.window_size)
 
-    def embedding(self) -> np.array:
+    def get_embedding(self) -> np.ndarray:
         return self.model.hidden_weight
 
 

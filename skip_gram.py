@@ -117,5 +117,5 @@ class SkipGram(object):
         return self._hidden_weight
 
     @hidden_weight.setter
-    def hidden_weight(self, value) -> np.ndarray:
+    def hidden_weight(self, value):
         self._hidden_weight = value
