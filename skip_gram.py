@@ -4,28 +4,14 @@ import logging
 import cupy as cp
 import numpy as np
 from typing import List
-
-
-class Softmax:
-    def __init__(self):
-        self.output = None
-        self.y_true = None
-
-    def forward(self, x: cp.array, y_true: cp.array) -> cp.array:
-        self.y_true = y_true
-        e_x = cp.exp(x - cp.max(x))
-        self.output = e_x / e_x.sum()
-        return self.output
+from loss import cross_entropy_loss
+from activation import softmax
 
 
 def xavier_initialization(shape: tuple) -> cp.ndarray:
     scale = 1 / max(1., (sum(shape)) / len(shape))
     limit = math.sqrt(3.0 * scale)
     return cp.random.uniform(-limit, limit, size=shape)
-
-
-def cross_entropy_loss(y, y_hat):
-    return -cp.multiply(y_hat, cp.log(y + 1e-7))
 
 
 class SkipGram(object):
@@ -41,7 +27,6 @@ class SkipGram(object):
         self.out_weight = xavier_initialization(shape=(self.n_input_dim, self.n_emb_dim))
 
         self.num_of_nodes = n_input_dim
-        self.softmax = Softmax()
 
         self.losses = []
         self.final_loss = []
@@ -82,7 +67,7 @@ class SkipGram(object):
                     context_one_hot[context_word] = 1.0
 
                     out_emb = cp.dot(self.out_weight, hidden_emb).squeeze()
-                    probs = self.softmax.forward(out_emb, context_one_hot)
+                    probs = softmax(out_emb)
 
                     self.result.append(probs)
                     self.result.append(context_one_hot)
@@ -122,9 +107,8 @@ class SkipGram(object):
                 self.forward(word_set, window_size)
 
             avg_loss = cp.average(self.losses)
-            logging.info(f'Epoch: {epoch}, Loss: {avg_loss}')
-
             self.final_loss.append(avg_loss)
+            logging.info(f'Epoch: {epoch}, Loss: {avg_loss}')
 
             # early stopping
             if avg_loss > cp.average(self.final_loss[-4:]):
