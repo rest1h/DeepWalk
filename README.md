@@ -1,4 +1,4 @@
-# Reimplementing DeepWalk to learn the algorithm
+# Learning the DeepWalk algorithm
 - This repository includes the DeepWalk code including the Skip-gram.  
 
 
@@ -7,4 +7,4 @@
     https://github.com/benedekrozemberczki/karateclub   
 
    
-- This codes doesn't include the hierarchical softmax and negative sampling.  
+- The hierarchical softmax and negative sampling are not implemented.  
