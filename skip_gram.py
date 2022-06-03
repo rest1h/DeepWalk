@@ -70,17 +70,17 @@ class SkipGram(object):
 
                     error = cross_entropy_loss(probs, context_one_hot)
                     error_2 = np.power(context_one_hot - probs, 2)
-                    score = f1_score(np.round(context_one_hot), np.round(probs), average='macro')
+                    # score = f1_score(np.round(context_one_hot), np.round(probs), average='macro')
 
                     diff += error + error_2
-                    score_diff.append(score)
+                    # score_diff.append(score)
 
             self.backward(diff, hidden_emb, target_one_hot)
 
             losses.append(np.sum(diff))
             score_diffs.append(np.average(score_diff))
         self.losses.append(np.average(losses))
-        score = np.average(score_diffs)
+        # score = np.average(score_diffs)
         # print(score)
 
     def backward(self, diff: np.array, hidden_emb: np.ndarray, target_one_hot: np.ndarray) -> None:
@@ -107,7 +107,7 @@ class SkipGram(object):
             logging.info(f'Epoch: {epoch}, Loss: {avg_loss}')
 
             # early stopping
-            if avg_loss > np.average(self.final_loss[-4:]):
+            if avg_loss > np.average(self.final_loss[-2:]):
                 return self.final_loss
 
         return self.final_loss

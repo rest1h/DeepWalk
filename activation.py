@@ -1,6 +1,6 @@
-import cupy as cp
+import numpy as np
 
 
-def softmax(x: cp.array) -> cp.array:
-    e_x = cp.exp(x - cp.max(x))
+def softmax(x: np.array) -> np.array:
+    e_x = np.exp(x - np.max(x))
     return e_x / e_x.sum()

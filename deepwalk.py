@@ -2,7 +2,7 @@ import networkx as nx
 import random
 from skip_gram import SkipGram
 from typing import List
-import cupy as cp
+import numpy as np
 
 
 class DeepWalk:
@@ -42,7 +42,7 @@ class DeepWalk:
         # train a skip-gram model, get a list including losses and return the list
         return self.model.train(self.epochs, walker.walks, num_of_nodes, self.window_size)
 
-    def embedding(self) -> cp.array:
+    def embedding(self) -> np.array:
         return self.model.hidden_weight
 
 
