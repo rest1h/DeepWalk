@@ -109,7 +109,7 @@ class SkipGram(object):
         self.out_weight += self.alpha * temp.T
         self.hidden_weight += self.alpha * EH
 
-    def train(self, epochs: int, words: , num_of_nodes: int, window_size: int):
+    def train(self, epochs: int, words: List[str], num_of_nodes: int, window_size: int):
         self.num_of_nodes = num_of_nodes
 
         # convert the type of words to int from string
@@ -119,7 +119,7 @@ class SkipGram(object):
         for epoch in range(epochs):
             self.losses = []
             for word_set in word_sets:
-                self.forward(word_set, num_of_nodes, window_size)
+                self.forward(word_set, window_size)
 
             avg_loss = cp.average(self.losses)
             logging.info(f'Epoch: {epoch}, Loss: {avg_loss}')
