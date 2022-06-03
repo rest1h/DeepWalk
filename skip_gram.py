@@ -23,19 +23,16 @@ class SkipGram(object):
         self.window_size = window_size
 
         # initialize weights
-        self.hidden_weight = xavier_initialization(shape=(self.n_input_dim, self.n_emb_dim))  # (34, emb_dim)
+        self._hidden_weight = xavier_initialization(shape=(self.n_input_dim, self.n_emb_dim))  # (34, emb_dim)
         self.out_weight = xavier_initialization(shape=(self.n_input_dim, self.n_emb_dim))
-
-        self.num_of_nodes = n_input_dim
 
         self.losses = []
         self.final_loss = []
-        self.temp = []
         self.result = []
 
     def _label_encode_word_set(self, word_set) -> List[List[int]]:
         # convert the type of words to int from string
-        word2idx = {str(word): idx for idx, word in enumerate(range(self.num_of_nodes))}
+        word2idx = {str(word): idx for idx, word in enumerate(range(self.n_input_dim))}
         return [
             [word2idx[word] for word in words]
             for words in word_set
@@ -51,7 +48,7 @@ class SkipGram(object):
 
             # increase a dimension of one-hot vector for dot production
             target_one_hot = cp.expand_dims(target_one_hot, axis=1)
-            hidden_emb = cp.dot(self.hidden_weight.T, target_one_hot)
+            hidden_emb = cp.dot(self._hidden_weight.T, target_one_hot)
 
             context_start_idx = max(0, target_idx - window_size)
             context_end_idx = min(target_idx + window_size, len(word_set))
@@ -59,7 +56,7 @@ class SkipGram(object):
             score_diff = []
 
             # Initialize variable diff. diff is a sum of losses
-            diff = cp.zeros(self.num_of_nodes)
+            diff = cp.zeros(self.n_input_dim)
             for context_idx, context_word in enumerate(word_set):
                 if context_start_idx <= context_idx <= context_end_idx and context_idx != target_idx:
                     # convert a context word to one-hot vector
@@ -92,10 +89,10 @@ class SkipGram(object):
         EH = cp.outer(target_one_hot, cp.dot(self.out_weight.T, diff))
 
         self.out_weight += self.alpha * temp.T
-        self.hidden_weight += self.alpha * EH
+        self._hidden_weight += self.alpha * EH
 
-    def train(self, epochs: int, words: List[str], num_of_nodes: int, window_size: int):
-        self.num_of_nodes = num_of_nodes
+    def train(self, epochs: int, words: List[str], n_input_dim: int, window_size: int):
+        self.n_input_dim = n_input_dim
 
         # convert the type of words to int from string
         word_sets = self._label_encode_word_set(words)
@@ -115,3 +112,11 @@ class SkipGram(object):
                 return self.final_loss
 
         return self.final_loss
+
+    @property
+    def hidden_weight(self) -> cp.ndarray:
+        return self._hidden_weight
+
+    @hidden_weight.setter
+    def hidden_weight(self, value) -> cp.ndarray:
+        self._hidden_weight = value
